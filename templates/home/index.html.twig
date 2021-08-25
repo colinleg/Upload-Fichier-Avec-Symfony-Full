@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello HomeController!{% endblock %}
+
+{% block body %}
+    <div class="font-bold flex justify-center flex-col items-center mt-8">
+
+        <h1 class="text-4xl text-blue-800">Comment envoyer un fichier sur un projet symfony --full</h1> 
+
+        <h2 class="text-2xl text-blue-700 mt-8">1 / Création de Formulaire</h2>
+
+        <div class="w-100 lg:w-1/2">
+            
+            <p class="p-4 border mt-8"> composer require symfony/form </p>
+            <p class="p-4 border mt-8"> Si pas installé : composer req makerbundle </p>
+            <p class="p-4 border mt-8"> php bin/console make:entity ( + migrations )</p>
+            <p class="p-4 border mt-8"> php bin/console make:form ou php bin/console make:registration-form </p>
+            <p class="p-4 border mt-8"> Modifier le formulaire 'type' dans Form/xxxType.php : on choisit ici les champs qui apparaîtront dans le formulaire</p>
+            <p class="p-4 border mt-8"> Infos : ne pas oublier de mettre un submit. la forme est : "->add('submit', SubmitType::class)"</p>
+            <p class="p-4 border mt-8"> Les labels sont paramétrables dans le xxxType.php et overridable dans les vues</p>
+            <p class="p-4 border mt-8"> Dans le controlleur, créer un formulaire d'après le modèleType avec par exemple : $legumeForm = $this->createForm(CreateLegumeType::class, $legume);</p>
+            <p class="p-4 border mt-8"> 1e param = le classe xxxType, 2e param = un objet, instance d'une entité ( ici légume )</p>
+            <p class="p-4 border mt-8"> Du contrôleur à la vue => il faut créer une vue du form avec : 'form' => $legumeForm->createView() [dans le tableau, dans les param de render] </p>
+
+        </div>
+
+        <h2 class="text-2xl text-blue-700 my-16">2 / Mise en forme du formulaire ( dans la vue )</h2>
+
+        <div class="w-100 lg:w-1/2">
+            <p class="p-4 border mt-8">Le formulaire commence et finit avec { { form.start(nomForm) } } et { { form.end(nomForm) } } où form est le nom du form donné dans le controlleur</p>
+            <p class="p-4 border mt-8"> Puis pour plus de contrôle on a : { { form_label(form.nom) } } et { { form_widget(form.nom) } } pour chaque champ, respectivement label et input</p>
+            <p class="p-4 border mt-8">Par défaut le label est le nom du champ, mais on peut le changer là ou on a crée le form ( dans form/ ou dans controller/ -> fonction add() ) avec un 3e paramètre après la classe </p>
+            <p class="p-4 border mt-8">Exemple : ->add('description', $type = null, ['label' => 'The Description :)']) </p>
+            
+
+        </div>
+
+        <h2 class="text-2xl text-blue-700 my-16">3 / Récupération des données/fichiers du formulaire via un Service Personnalisé </h2>
+
+        <div class="w-100 lg:w-1/2">
+
+            <p class="p-4 border mt-8"></p>
+
+            <p class="p-4 border mt-8">Deux méthodes pour récupérer un form : handleRequest() et submit(). handleRequest() est recommandé</p>
+            <p class="p-4 border mt-8">On peut mettre toute la logique du handleRequest dans la même fonction dans le controlleur</p>
+            <p class="p-4 border mt-8">La fonction prend alors un objet Request en param, puis :</p>
+            <p class="p-4 border mt-8">$form->handleRequest($request)</p>
+            <p class="p-4 border mt-8">Deux classes à importer, pour gérer la récupération du fichier : </p>
+            <ol class="p-4 border mt-8">
+                <li> use Symfony\Component\Form\Extension\Core\Type\FileType </li>
+                <li> use Symfony\Component\Filesystem\Filesystem </li>
+            </ol>
+            <p class="p-4 border mt-8">On vérifie avec ->isSubmitted() et ->isValid() que le formulaire est bien soumis ( avec un if )</p>
+            <p class="p-4 border mt-8">On met le fichier dans une variable avec $form->get('nomChamp')>getData()</p>
+            <p class="p-4 border mt-8">On fait une variable qui contiendra le nom du fichier ( plutôt unique )</p>
+            <p class="p-4 border mt-8">on range le fichier avec $file->move() qui prend deux params : 1. le chemin 2. le nom du fichier</p>
+            <p class="p-4 border mt-8">note : il faut bien définir dans config/service.yaml un parametre qui est le chemin où seront stockés les fichiers, avec par exemple : </p>
+            <p class="p-4 border mt-8">parameters: <br> < alinea > brochures_directory: '%kernel.project_dir%/public/uploads/brochures'</p>
+            <p class="p-4 border mt-8">On récupère ce paramètre ( qui est un chemin ) avec $this->getParameters() dans le controlleur </p>
+            <p class="p-4 border mt-8">On crée un service pour déplacer la logique de l'upload : dans src/Service/Upload.php, une classe qui aurait namespace App\Service</p>
+            <p class="p-4 border mt-8">On importe ce service dans le contrôlleur soit dans construct(UploadService $uploadService) puis $this->uploadService = $uploadService, soit dans la function, en mettant en paramètre(UploadService $uploadService)</p>
+            <p class="p-4 border mt-8">Ce service s'occupera de rentrer le fichier dans le bon répertoire, puis renvoie le nom du fichier inséré (pas le chemin)</p>
+            <p class="p-4 border mt-8">Ensuite on rentre le nom dans la bdd, et on persist + flush l'objet du formulaire (ici legume)</p>
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello LegumesController!{% endblock %}
+
+{% block body %}
+
+<div class="flex flex-col">
+    {% for legume in legumes %}
+        {# <div class="h-96 w-96 bg-gray-200 rounded-lg m-12 flex flex-col items-center"> #}
+
+            <ol> 
+                <li>Nom : {{ legume.nom }}</li>
+                <li>Description : {{ legume.description }}</li>
+                <li>Id : {{ legume.id }}</li>
+                <br>
+            </ol>
+            
+            
+        {# </div> #}
+        
+    {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UploadController!{% endblock %}
+
+{% block body %}
+
+    <h1 class="text-4xl font-bold text-blue-400 text-center mt-16">Nouveau légume</h1>
+    <div class="border p-8 flex justify-center bg-green-100 text-green-600 my-12">
+    {% for message in app.flashes('success') %}
+        <strong>{{ message }} </strong>
+    {% endfor %}
+    </div>
+   
+
+    <div id="container" class="flex justify-center items-center">
+        <div class="w-2/6 bg-gray-100 rounded-xl mt-32 p-8">
+            {{ form_start(form) }}
+
+                <div class="mt-8 flex justify-around">
+                    <div class="">
+                        {{ form_label(form.nom) }}
+                    </div>
+
+                    <div class="border rounded-lg outline-none bg-white p-2 ">
+                        {{ form_widget(form.nom) }}
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-around">
+                    <div class="">
+                        {{ form_label(form.description) }}
+                    </div>
+
+                    <div class="border rounded-lg outline-none bg-white p-2">
+                        {{ form_widget(form.description) }}
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-around">
+                    <div class="">
+                        {{ form_label(form.fileName) }}
+                    </div>
+
+                    <div class="border rounded-lg outline-none bg-white p-4">
+                        {{ form_widget(form.fileName) }}
+                    </div>
+                </div>
+
+                <div class="mt-8 flex justify-center p-2 bg-blue-600 rounded-2xl cursor-pointer text-white w-1/2 ml-28">
+                    {{ form_row(form.submit) }}
+                </div>
+
+            {{ form_end(form) }}
+        </div>
+    </div>
+{% endblock %}
